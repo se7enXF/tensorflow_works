@@ -64,32 +64,29 @@ def img_classfication(csv_label):
 			csv_writer.writerow([record_buffer[0][i], record_buffer[1][i]])
 
 
-def train_label_normalization(csv_label):
-	path, f_name = os.path.split(csv_label)
-	norma_label = os.path.join(path, "norma_label.csv")
+def train_label_normalization():
 
-	with open(csv_label, "r") as File:
+	train_csv = "D:/data/2_selected_labels.csv"
+	train_path = "D:/data/2_selected_train"
+	path, f_name = os.path.split(train_csv)
+	norma_label = os.path.join(path, "norma_label.txt")
+
+	with open(train_csv, "r") as File:
 		csv_reader = csv.reader(File)
 		for i, item in enumerate(csv_reader):
 			if i == 0:
 				continue
 
 			# 开始读取数据，每一行结构[图片名，标签]
-			img_name = os.path.join("G:/data/train_all", item[0])
+			img_name = os.path.join(train_path, item[0])
 			lable = float(item[1])
 			tmp_txt[0].append(img_name)
-			# tmp_txt[1].append((math.log(lable+1)+lable)/2)		# max=632
-			tmp_txt[1].append((math.log(lable + 1) + lable) / (2*632))
+			tmp_txt[1].append(lable/138)
 
 	with open(norma_label, "w") as txt_f:
 		for i in range(len(tmp_txt[0])):
 			string = tmp_txt[0][i]+" "+str(tmp_txt[1][i])+"\n"
 			txt_f.write(string)
-	# with open(norma_label, "w", newline="") as csv_file:
-	# 	csv_writer = csv.writer(csv_file)
-	# 	for i in range(len(tmp_txt[0])):
-	# 		csv_writer.writerow([tmp_txt[0][i], tmp_txt[1][i]])
-	# print("Saved to:"+norma_label)
 
 
 def test_label_normalization(csv_label):
@@ -153,15 +150,10 @@ def csv_2_txt(csv_label):
 
 
 if __name__ == "__main__":
-	img_label = "G:/data/train_all.csv"
-	# img_label = "G:/map_data/test/test_label.csv"
-	# 图片csv文件目录
+
 	start_time = datetime.datetime.now()
 
-	train_label_normalization(img_label)
-	# test_label_normalization(img_label)
-	# csv_2_txt(img_label)
-	# img_classfication(img_label)
+	train_label_normalization()
 
 	end_time = datetime.datetime.now()
 	print("耗时：" + str(end_time - start_time))

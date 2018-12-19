@@ -1,11 +1,6 @@
 # -*- coding:utf-8 -*-  
 import csv
 import os
-import datetime
-
-
-
-temp = 1
 
 
 def label_2_matrix(csv_dir, matrix_dir):

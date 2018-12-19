@@ -26,7 +26,7 @@ train_layers = ['fc8', 'fc7']
 summary_step = 10
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "D:/tf_work/log/reg_{}_lr_{}".format(datetime.now().strftime("%Y-%m-%d_%H_%M"), learning_rate)
+filewriter_path = "D:/tf_work/log/reg_{}_lr_{}".format(datetime.now().strftime("%Y-%m-%d_%H-%M"), learning_rate)
 checkpoint_path = filewriter_path
 
 # Create parent path if it doesn't exist
@@ -119,12 +119,11 @@ with tf.Session(config=config) as sess:
             batch_xs, batch_ys = train_generator.next_batch(batch_size)
 
             # And run the training op
-            sess.run(train_op, feed_dict={x: batch_xs,
-                                          y: batch_ys,
-                                          keep_prob: dropout_rate})
+            sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
 
+            mse = sess.run(loss, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+            print("{} Step : {}  Loss: {}".format(datetime.now(), step, mse))
             # Generate summary with the current batch of data and write to file
-            print("{} Step : {}".format(datetime.now(), step))
             if step % summary_step == 0:
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
                                                         y: batch_ys,
