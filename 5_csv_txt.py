@@ -89,9 +89,11 @@ def train_label_normalization():
 			txt_f.write(string)
 
 
-def test_label_normalization(csv_label):
+def test_label_normalization():
+
+	csv_label = "D:\\map_data\\test\\test_label.csv"
 	path, f_name = os.path.split(csv_label)
-	norma_label = os.path.join(path, "norma_label.txt")
+	norma_label = os.path.join(path, "test_label_norma.txt")
 
 	with open(csv_label, "r") as File:
 		csv_reader = csv.reader(File)
@@ -100,7 +102,8 @@ def test_label_normalization(csv_label):
 				continue
 
 			# 开始读取数据，每一行结构[图片名，标签]
-			img_name = os.path.join("G:/map_data/test/test", item[0])
+			# img_name = os.path.join("D:/map_data/test/test", item[0])
+			img_name = item[0]
 			lable = float(item[7])
 			tmp_txt[0].append(img_name)
 			tmp_txt[1].append(lable/100.00)
@@ -153,7 +156,8 @@ if __name__ == "__main__":
 
 	start_time = datetime.datetime.now()
 
-	train_label_normalization()
+	# train_label_normalization()
+	test_label_normalization()
 
 	end_time = datetime.datetime.now()
 	print("耗时：" + str(end_time - start_time))

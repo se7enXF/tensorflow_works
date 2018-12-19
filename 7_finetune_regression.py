@@ -15,7 +15,7 @@ train_file = "D:/data/norma_label.txt"
 
 # Learning params
 learning_rate = 0.0001
-num_epochs = 2
+num_epochs = 10
 batch_size = 256
 
 # Network params
