@@ -14,7 +14,6 @@ def label_2_matrix(csv_dir, save_dir):
     with open(csv_dir, "r") as File:
         p_reader = csv.reader(File)
         csv_cp = list(p_reader)
-        line_sum = len(csv_cp)
         csv_line_num = 0
         print("读取数据......" + csv_dir)
         for line in csv_cp:
@@ -61,7 +60,6 @@ def label_2_matrix(csv_dir, save_dir):
     print("图片保存："+save_dir)
 
 
-
 if __name__ == "__main__":
     prediction_result = "./predict.csv"
     test_labels = "./test.csv"
@@ -71,4 +69,4 @@ if __name__ == "__main__":
     # label_2_matrix(prediction_result, p_save_path)
     label_2_matrix(test_labels, t_save_path)
 
-    os.system("start explorer G:\\finetune_alexnet_with_tensorflow\\result")
+    os.system("start explorer D:\\finetune_alexnet_with_tensorflow\\result")
