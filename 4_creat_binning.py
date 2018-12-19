@@ -1,0 +1,167 @@
+# -*- coding:utf-8 -*-
+'''
+用途：将发生次数按照比例分为n类
+命令行参数：无
+输出：将对应类别拷贝到对应文件夹（train/data/不同类别文件夹）
+'''
+import os
+import datetime
+import csv
+import shutil
+import math
+
+class_n = 3
+tmp_counter = [0, 0, 0]
+tmp_txt = [[], []]
+
+tmp_train = [[], []]
+tmp_val = [[], []]
+
+
+def img_classfication(csv_label):
+
+	dir_, file_ = os.path.split(csv_label)
+	# train_bin3 = os.path.join(dir_, "train_bin3.csv")
+	train_bin3 = "./class_test_bin3.csv"
+	record_buffer = [["文件名"], ["类别"]]
+
+	with open(csv_label, "r") as File:
+		csv_reader = csv.reader(File)
+		csv_cp = list(csv_reader)
+		line_sum = len(csv_cp)
+		csv_line_num = 0
+		print("读取图片信息......"+csv_label)
+		for item in csv_cp:
+			csv_line_num += 1
+			if csv_line_num == 1:
+				continue
+			# 开始读取数据，每一行结构[图片名，标签]
+			img_name = item[0]
+			# train:1,test:7
+			lable = float(item[7])
+
+			# train:110,test:
+			if lable <= 0:
+				tmp_counter[0] += 1
+				record_buffer[0].append(img_name)
+				record_buffer[1].append("0")
+			# train:250,test:
+			elif lable <= 1:
+				tmp_counter[1] += 1
+				record_buffer[0].append(img_name)
+				record_buffer[1].append("1")
+			else:
+				tmp_counter[2] += 1
+				record_buffer[0].append(img_name)
+				record_buffer[1].append("2")
+			if csv_line_num % 100 == 0:
+				print("正在分类......" + str(round(csv_line_num / line_sum, 4) * 100) + "%")
+
+	print(tmp_counter, "保存分类csv到：", train_bin3)
+	with open(train_bin3, "w", newline="") as csv_file:
+		csv_writer = csv.writer(csv_file)
+		for i in range(len(record_buffer[0])):
+			csv_writer.writerow([record_buffer[0][i], record_buffer[1][i]])
+
+
+def train_label_normalization(csv_label):
+	path, f_name = os.path.split(csv_label)
+	norma_label = os.path.join(path, "norma_label.csv")
+
+	with open(csv_label, "r") as File:
+		csv_reader = csv.reader(File)
+		for i, item in enumerate(csv_reader):
+			if i == 0:
+				continue
+
+			# 开始读取数据，每一行结构[图片名，标签]
+			img_name = os.path.join("G:/data/train_all", item[0])
+			lable = float(item[1])
+			tmp_txt[0].append(img_name)
+			# tmp_txt[1].append((math.log(lable+1)+lable)/2)		# max=632
+			tmp_txt[1].append((math.log(lable + 1) + lable) / (2*632))
+
+	with open(norma_label, "w") as txt_f:
+		for i in range(len(tmp_txt[0])):
+			string = tmp_txt[0][i]+" "+str(tmp_txt[1][i])+"\n"
+			txt_f.write(string)
+	# with open(norma_label, "w", newline="") as csv_file:
+	# 	csv_writer = csv.writer(csv_file)
+	# 	for i in range(len(tmp_txt[0])):
+	# 		csv_writer.writerow([tmp_txt[0][i], tmp_txt[1][i]])
+	# print("Saved to:"+norma_label)
+
+
+def test_label_normalization(csv_label):
+	path, f_name = os.path.split(csv_label)
+	norma_label = os.path.join(path, "norma_label.txt")
+
+	with open(csv_label, "r") as File:
+		csv_reader = csv.reader(File)
+		for i, item in enumerate(csv_reader):
+			if i == 0:
+				continue
+
+			# 开始读取数据，每一行结构[图片名，标签]
+			img_name = os.path.join("G:/map_data/test/test", item[0])
+			lable = float(item[7])
+			tmp_txt[0].append(img_name)
+			tmp_txt[1].append(lable/100.00)
+
+	with open(norma_label, "w") as txt_f:
+		for i in range(len(tmp_txt[0])):
+			string = tmp_txt[0][i]+" "+str(tmp_txt[1][i])+"\n"
+			txt_f.write(string)
+	print("Saved to:"+norma_label)
+
+
+def csv_2_txt(csv_label):
+	path, f_name = os.path.split(csv_label)
+	train_txt = os.path.join(path, "train.txt")
+	val_txt = os.path.join(path, "val.txt")
+	counter = [0 for i in range(1256)]		# 最大标签1255
+
+	with open(csv_label, "r") as File:
+		csv_reader = csv.reader(File)
+		for i, item in enumerate(csv_reader):
+			if i == 0:
+				continue
+
+			# 开始读取数据，每一行结构[图片名，标签]
+			img_name = os.path.join("G:/data/train_all", item[0])
+			lable = int(item[1])
+			# tmp_txt[0].append(img_name)
+			# if counter[lable] <= 10:
+			# 	tmp_val[0].append(img_name)
+			# 	tmp_val[1].append(lable)
+			# 	counter[lable] += 1
+			# 	continue
+
+			tmp_train[0].append(img_name)
+			tmp_train[1].append(lable)
+
+	with open(train_txt, "w") as txt_f:
+		for i in range(len(tmp_train[0])):
+			string = tmp_train[0][i]+" "+str(tmp_train[1][i])+"\n"
+			txt_f.write(string)
+	# with open(val_txt, "w") as txt_f:
+	# 	for i in range(len(tmp_val[0])):
+	# 		string = tmp_val[0][i]+" "+str(tmp_val[1][i])+"\n"
+	# 		txt_f.write(string)
+
+	print("Saved to:", train_txt, val_txt)
+
+
+if __name__ == "__main__":
+	img_label = "G:/data/train_all.csv"
+	# img_label = "G:/map_data/test/test_label.csv"
+	# 图片csv文件目录
+	start_time = datetime.datetime.now()
+
+	train_label_normalization(img_label)
+	# test_label_normalization(img_label)
+	# csv_2_txt(img_label)
+	# img_classfication(img_label)
+
+	end_time = datetime.datetime.now()
+	print("耗时：" + str(end_time - start_time))
