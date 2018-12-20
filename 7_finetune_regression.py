@@ -15,7 +15,7 @@ train_file = "D:/data/norma_label.txt"
 
 # Learning params
 learning_rate = 0.0001
-num_epochs = 10
+num_epochs = 3
 batch_size = 256
 
 # Network params
@@ -121,10 +121,10 @@ with tf.Session(config=config) as sess:
             # And run the training op
             sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys, keep_prob: dropout_rate})
 
-            mse = sess.run(loss, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
-            print("{} Step : {}  Loss: {}".format(datetime.now(), step, mse))
             # Generate summary with the current batch of data and write to file
             if step % summary_step == 0:
+                mse = sess.run(loss, feed_dict={x: batch_xs, y: batch_ys, keep_prob: 1.})
+                print("{} Step : {}    MSE: {}".format(datetime.now(), step, mse))
                 s = sess.run(merged_summary, feed_dict={x: batch_xs,
                                                         y: batch_ys,
                                                         keep_prob: 1.})

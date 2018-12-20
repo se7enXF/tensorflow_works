@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 import csv
 from alexnet import AlexNet
+import datetime
 
 # edit here
 test_img_path = "D:\\map_data\\test\\test"
@@ -12,7 +13,7 @@ num_class = 0
 
 img_files = [os.path.join(test_img_path, f) for f in os.listdir(test_img_path) if f.endswith('.tif')]
 
-print("loading images...")
+print("{} loading images...".format(datetime.datetime.now()))
 # load all images
 imagenet_mean = np.array([104., 117., 124.], dtype=np.float32)
 imgs = []
@@ -34,6 +35,7 @@ score = model.fc8
 if num_class != 0:
     softmax = tf.nn.softmax(score)
 
+print("{} Start predicting...".format(datetime.datetime.now()))
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 with tf.Session(config=config) as sess:
@@ -76,4 +78,4 @@ with tf.Session(config=config) as sess:
         csv_writer = csv.writer(csv_file)
         for i in range(len(results[0])):
             csv_writer.writerow([results[0][i], results[1][i]])
-    print("预测结果保存在："+result_dir)
+    print("{} 预测结果保存在：{}".format(datetime.datetime.now(), result_dir))
