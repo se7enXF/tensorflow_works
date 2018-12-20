@@ -4,11 +4,11 @@ import os
 
 
 def label_2_matrix(csv_dir, matrix_dir):
+
     string = [[0 for i in range(88)] for i in range(115)]
     with open(csv_dir, "r") as File:
         p_reader = csv.reader(File)
         csv_cp = list(p_reader)
-        line_sum = len(csv_cp)
         csv_line_num = 0
         print("读取预测结果......" + csv_dir)
         for line in csv_cp:
@@ -17,7 +17,7 @@ def label_2_matrix(csv_dir, matrix_dir):
                 continue
 
             img_name = line[0]
-            label = int(line[1])
+            label = float(line[1])
             pos = img_name[6:]
             pos, ext = os.path.splitext(pos)
             x, y = pos.split("-")
@@ -32,11 +32,12 @@ def label_2_matrix(csv_dir, matrix_dir):
 
 
 if __name__ == "__main__":
-    prediction_result = "./h1_predict.csv"
-    test_labels = "./test.csv"
+    prediction_result = "reg_0.0001_predict.csv"
+    test_labels = "test_label_norma.csv"
 
-    p_matrix = "./result/h1_p_matrix.csv"
+    p_matrix = "./result/p_matrix.csv"
     t_matrix = "./result/t_matrix.csv"
 
     label_2_matrix(prediction_result, p_matrix)
-    # label_2_matrix(test_labels, t_matrix)
+    label_2_matrix(test_labels, t_matrix)
+

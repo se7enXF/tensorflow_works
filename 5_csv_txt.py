@@ -93,7 +93,7 @@ def test_label_normalization():
 
 	csv_label = "D:\\map_data\\test\\test_label.csv"
 	path, f_name = os.path.split(csv_label)
-	norma_label = os.path.join(path, "test_label_norma.txt")
+	norma_label = os.path.join(path, "test_label_norma.csv")
 
 	with open(csv_label, "r") as File:
 		csv_reader = csv.reader(File)
@@ -106,12 +106,13 @@ def test_label_normalization():
 			img_name = item[0]
 			lable = float(item[7])
 			tmp_txt[0].append(img_name)
-			tmp_txt[1].append(lable/100.00)
+			tmp_txt[1].append(round(lable/100, 4))
 
-	with open(norma_label, "w") as txt_f:
+	with open(norma_label, "w", newline="") as csv_file:
+		csv_writer = csv.writer(csv_file)
+		csv_writer.writerow(["图片名", "标签"])
 		for i in range(len(tmp_txt[0])):
-			string = tmp_txt[0][i]+" "+str(tmp_txt[1][i])+"\n"
-			txt_f.write(string)
+			csv_writer.writerow([tmp_txt[0][i], tmp_txt[1][i]])
 	print("Saved to:"+norma_label)
 
 
@@ -119,7 +120,7 @@ def csv_2_txt(csv_label):
 	path, f_name = os.path.split(csv_label)
 	train_txt = os.path.join(path, "train.txt")
 	val_txt = os.path.join(path, "val.txt")
-	counter = [0 for i in range(1256)]		# 最大标签1255
+	counter = [0 for i in range(186)]		# 最大标签1255
 
 	with open(csv_label, "r") as File:
 		csv_reader = csv.reader(File)

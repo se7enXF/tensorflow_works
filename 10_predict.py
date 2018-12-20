@@ -8,7 +8,7 @@ import datetime
 
 # edit here
 test_img_path = "D:\\map_data\\test\\test"
-ckpt_dir = "D:/tf_work/log/reg_lr_0.0001/model_epoch2.ckpt"
+ckpt_dir = "D:\\tf_work\\log\\reg_2018-12-20_15-18_lr_0.0001\\model_epoch3.ckpt"
 num_class = 0
 
 img_files = [os.path.join(test_img_path, f) for f in os.listdir(test_img_path) if f.endswith('.tif')]
@@ -33,7 +33,7 @@ score = model.fc8
 
 # create op to calculate softmax
 if num_class != 0:
-    softmax = tf.nn.softmax(score)
+    score = tf.nn.softmax(score)
 
 print("{} Start predicting...".format(datetime.datetime.now()))
 config = tf.ConfigProto()
@@ -65,7 +65,10 @@ with tf.Session(config=config) as sess:
         if num_class == 0:
             img_path, img_name = os.path.split(img_files[i])
             results[0].append(img_name)
-            results[1].append(probs[0][0])
+            p_label = round(probs[0][0], 4)
+            if p_label < 0.0001:
+                results[1].append(0)
+            results[1].append(p_label)
             print(results[0][i], results[1][i])
         else:
             class_name = np.argmax(probs)
@@ -73,7 +76,7 @@ with tf.Session(config=config) as sess:
             results[0].append(img_name)
             results[1].append(class_name)
 
-    result_dir = "./class_0.0001_predict.csv"
+    result_dir = "./reg_0.0001_predict.csv"
     with open(result_dir, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         for i in range(len(results[0])):
