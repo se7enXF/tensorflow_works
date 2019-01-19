@@ -33,11 +33,11 @@ def label_2_matrix(csv_dir, matrix_dir):
 
 if __name__ == "__main__":
     prediction_result = "reg_0.0001_predict.csv"
-    test_labels = "test_label_norma.csv"
+    # test_labels = "test_label_norma.csv"
 
-    p_matrix = "./result/p_matrix.csv"
-    t_matrix = "./result/t_matrix.csv"
+    p_matrix = "./result/p_0.0001_matrix.csv"
+    # t_matrix = "./result/t_matrix.csv"
 
     label_2_matrix(prediction_result, p_matrix)
-    label_2_matrix(test_labels, t_matrix)
+    # label_2_matrix(test_labels, t_matrix)
 

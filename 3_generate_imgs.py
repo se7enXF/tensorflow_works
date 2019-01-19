@@ -133,7 +133,7 @@ def select_images():
         write_str[0].append(cc)
         write_str[1].append(0)
 
-    # select left 1-99
+    # select left 1-137
     print("{} Reading csv for the left class".format(datetime.datetime.now()))
     data_buf = [[], []]
     with open(pix_2_dir, "r") as File:

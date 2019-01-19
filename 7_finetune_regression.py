@@ -15,7 +15,7 @@ train_file = "D:/data/norma_label.txt"
 
 # Learning params
 learning_rate = 0.001
-num_epochs = 3
+num_epochs = 6
 batch_size = 256
 
 # Network params
@@ -23,15 +23,21 @@ dropout_rate = 0.5
 train_layers = ['fc8', 'fc7']
 
 # How often we want to write the tf.summary data to disk
-summary_step = 10
+summary_step = 5
 
 # Path for tf.summary.FileWriter and to store model checkpoints
-filewriter_path = "D:/tf_work/log/reg_{}_lr_{}".format(datetime.now().strftime("%Y-%m-%d_%H-%M"), learning_rate)
+restore_dir = "D:/tf_work/log/reg_2019-01-04_14-34_lr_0.001_restore"
+if restore_dir:
+    filewriter_path = "D:/tf_work/log/reg_{}_lr_{}_restore".format(datetime.now().strftime("%Y-%m-%d_%H-%M"), learning_rate)
+else:
+    filewriter_path = "D:/tf_work/log/reg_{}_lr_{}".format(datetime.now().strftime("%Y-%m-%d_%H-%M"), learning_rate)
+
+    # Create parent path if it doesn't exist
+    if not os.path.isdir(filewriter_path):
+        os.mkdir(filewriter_path)
+
 checkpoint_path = filewriter_path
 
-# Create parent path if it doesn't exist
-if not os.path.isdir(checkpoint_path):
-    os.mkdir(checkpoint_path)
 
 # TF placeholder for graph input and output
 x = tf.placeholder(tf.float32, [batch_size, 227, 227, 3])
@@ -101,11 +107,15 @@ with tf.Session(config=config) as sess:
 
     # Load the pretrained weights into the non-trainable layer
     # model.load_initial_weights(sess)
-    weight_path = "hybird.npy"
-    model.load_my_weights(weight_path, sess)
+    if restore_dir:
+        print("{} Restore from {}".format(datetime.now(), restore_dir))
+        saver.restore(sess, tf.train.latest_checkpoint(restore_dir))
+    else:
+        weight_path = "hybird.npy"
+        model.load_my_weights(weight_path, sess)
 
     print("{} Start training...".format(datetime.now()))
-    print("{} Open Tensorboard at --logdir {}".format(datetime.now(), filewriter_path))
+    print("{} tensorboard --logdir {}".format(datetime.now(), filewriter_path))
 
     # Loop over number of epochs
     for epoch in range(num_epochs):

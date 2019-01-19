@@ -8,7 +8,8 @@ import datetime
 
 # edit here
 test_img_path = "D:\\map_data\\test\\test"
-ckpt_dir = "D:\\tf_work\\log\\reg_2018-12-20_15-18_lr_0.0001\\model_epoch3.ckpt"
+ckpt_dir = "D:\\tf_work\\log\\reg_2018-12-27_13-32_lr_0.0001/model_epoch20.ckpt"
+result_dir = "./reg_0.0001_predict.csv"
 num_class = 0
 
 img_files = [os.path.join(test_img_path, f) for f in os.listdir(test_img_path) if f.endswith('.tif')]
@@ -76,7 +77,6 @@ with tf.Session(config=config) as sess:
             results[0].append(img_name)
             results[1].append(class_name)
 
-    result_dir = "./reg_0.0001_predict.csv"
     with open(result_dir, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         for i in range(len(results[0])):

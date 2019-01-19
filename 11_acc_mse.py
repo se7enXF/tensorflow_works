@@ -1,52 +1,51 @@
 # -*- coding:utf-8 -*-  
 import csv
-import sys
-import time
 
-prediction_result = "/home/se7en/my_caffe/python/caffe_models/l_r4-8_result.csv"
-test_labels ="/home/se7en/my_caffe/python/caffe_models/test_labes.csv"
-result_number = 6800
+prediction_result = "reg_0.0001_predict.csv"
+test_labels = "test_label_norma.csv"
 
-csvFile = open(prediction_result,"r")
-csv_reader = csv.reader(csvFile)
-csv_line_num = 0
-key = 0
+t_n = []
+t_l = []
+p_n = []
+p_l = []
 
-zero = 0
-one = 0
-two = 0
+print("读取原始结果......" + test_labels)
+with open(test_labels, "r") as File:
+	p_reader = csv.reader(File)
+	csv_cp = list(p_reader)
+	csv_line_num = 0
+	for line in csv_cp:
+		csv_line_num += 1
+		if csv_line_num == 1:
+			continue
+		t_n.append(line[0])
+		t_l.append(line[1])
 
-for line in csv_reader:
-	csv_line_num += 1
-	#if csv_line_num == 1:
-	#	continue
-	print(line[0],line[1],"......",csv_line_num,)
-	print("/",result_number,"|",str(round(100*float(csv_line_num)/result_number,2)),"%")
-	
-	csvfile = open(test_labels,'r')
-	csvreader=csv.reader(csvfile)
-	for row in csvreader:
-		img_lab = row[1]
-		img_name = row[0]
-		
-		if img_name == line[0]:
-			key = 1
-			dis = abs(int(line[1])-int(img_lab)) 
-			if dis == 0:
-				zero += 1
-			elif dis == 1:
-				one += 1
-			elif dis == 2:
-				two += 1
-			else:
-				sys.exit("Wrong label!")
+print("读取预测结果......" + prediction_result)
+with open(prediction_result, "r") as File:
+	p_reader = csv.reader(File)
+	csv_cp = list(p_reader)
+	csv_line_num = 0
+	for line in csv_cp:
+		csv_line_num += 1
+		if csv_line_num == 1:
+			continue
+		p_n.append(line[0])
+		p_l.append(line[1])
+
+print("计算MSE......" )
+error = 0
+for i in range(len(t_n)):
+	t_name = t_n[i]
+	t_label = float(t_l[i])
+
+	for j in range(len(p_n)):
+		p_name = p_n[j]
+		p_label = float(p_l[j])
+		if t_name == p_name:
+			error += pow(p_label - t_label, 2)
 			break
-		else:
-			key = 0
-		
-	csvfile.close
-	if key == 0:
-		sys.exit("Wrong filename!")		
-csvFile.close
-print ("误差0,1,2依次为:",zero,one,two)
-print ("预测精确度:",str(round(100*float(zero)/result_number,2)),"%")
+
+MSE = error/len(t_n)
+print("预测结果 {} 的MSE是 {}".format(prediction_result, round(MSE, 4)))
+
